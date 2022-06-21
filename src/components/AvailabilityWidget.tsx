@@ -30,6 +30,11 @@ export default function AvailabilityWidget() {
 			<div ref={containerRef} className="columns-container">
 				<DayColumn weekday="monday" availableHeight={columnHeight} />
 				<DayColumn weekday="tuesday" availableHeight={columnHeight} />
+				<DayColumn weekday="wednesday" availableHeight={columnHeight} />
+				{/* <DayColumn weekday="thursday" availableHeight={columnHeight} /> */}
+				{/* <DayColumn weekday="friday" availableHeight={columnHeight} /> */}
+				{/* <DayColumn weekday="saturday" availableHeight={columnHeight} /> */}
+				{/* <DayColumn weekday="sunday" availableHeight={columnHeight} /> */}
 				{/* <DayColumn weekday="tuesday" containerRef={containerRef} /> */}
 			</div>
 		</div>

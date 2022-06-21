@@ -1,8 +1,10 @@
 import { nanoid } from 'nanoid';
 import { PointerEvent, useEffect, useRef, useState } from 'react';
+import { GRID_LINE_HEIGHTS } from '../lib/constants';
 import {
 	getElementRect,
 	handleTimeslotsMerge,
+	timeToYPos,
 	yPosToTime,
 } from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
@@ -80,13 +82,20 @@ export default function DayColumn({ weekday, availableHeight }: IProps) {
 				className="column-content"
 				onPointerDown={handleColumnClick}
 			>
+				{GRID_LINE_HEIGHTS.map(H => (
+					<hr
+						style={{
+							top: timeToYPos(H, availableHeight),
+						}}
+					/>
+				))}
+
 				{timeslots.map(slot => (
 					<TimeSlot
 						key={slot.id}
 						timeslot={slot}
 						availableHeight={availableHeight}
 					/>
-					// <TimeSlot timeslot={slot} height={} top={} />
 				))}
 			</div>
 		</div>
