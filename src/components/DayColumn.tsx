@@ -1,4 +1,10 @@
-import { useId, useRef, useState } from 'react';
+import { nanoid } from 'nanoid';
+import { PointerEvent, useEffect, useRef, useState } from 'react';
+import {
+	getElementRect,
+	handleTimeslotsMerge,
+	yPosToTime,
+} from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
 import TimeSlot from './TimeSlot';
 
@@ -9,22 +15,71 @@ interface IProps {
 }
 
 export default function DayColumn({ weekday, availableHeight }: IProps) {
-	const ID = useId();
-	const [timeslots, setTimeslots] = useState<ITimeslot[]>([
-		{ id: ID, start: 1000, end: 1440 },
-	]);
+	const [timeslots, setTimeslots] = useState<ITimeslot[]>([]);
 
 	const columnRef = useRef<HTMLDivElement>(null);
 
-	console.log(availableHeight);
+	function handleColumnClick(e: PointerEvent<HTMLDivElement>) {
+		const timeClicked = yPosToTime(
+			e.clientY,
+			availableHeight,
+			getElementRect(columnRef).top + 4
+			// getElementRect(columnRef).top
+		);
+
+		console.log({ timeClicked });
+
+		const hitSomething = timeslots.find(
+			slot => timeClicked >= slot.start && timeClicked <= slot.end
+		);
+
+		if (hitSomething) {
+			console.log(
+				'HIT!!!',
+				timeslots.find(
+					slot => timeClicked >= slot.start && timeClicked <= slot.end
+				)
+			);
+			return;
+		}
+
+		// are we close to the edges?
+		let [slotStart, slotEnd] = [timeClicked - 30, timeClicked + 30];
+
+		if (slotStart < 30) {
+			[slotStart, slotEnd] = [0, 60];
+		}
+		if (slotEnd > 1440) {
+			[slotStart, slotEnd] = [1380, 1440];
+		}
+
+		// newSlot will span for 1h. The click position will be in the exact middle of the timeSlot
+		const newTimeSlot = {
+			id: nanoid(),
+			start: slotStart,
+			end: slotEnd,
+		};
+
+		const newTimeslots = [...timeslots, newTimeSlot];
+
+		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
+	}
+
+	useEffect(() => {
+		console.log(weekday, timeslots);
+	}, [timeslots]);
 
 	return (
-		<div ref={columnRef} className="day-column">
+		<div className="day-column">
 			<div className="column-header">
 				<h3>{weekday}</h3>
 			</div>
 
-			<div className="column-content">
+			<div
+				ref={columnRef}
+				className="column-content"
+				onPointerDown={handleColumnClick}
+			>
 				{timeslots.map(slot => (
 					<TimeSlot
 						key={slot.id}

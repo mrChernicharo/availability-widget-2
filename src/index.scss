@@ -26,22 +26,21 @@
 			display: flex;
 
 			.day-column {
-				border: 1px solid;
+				// border: 1px solid;
 				width: var(--column-width);
 				display: flex;
 				flex-direction: column;
 
 				.column-header {
-					border: 1px solid;
+					// border: 1px solid;
 					height: var(--heading-height);
 					background-color: var(--primary-color);
 					color: #fff;
 					@include flex();
 				}
 				.column-content {
-					border: 1px solid;
 					height: var(--column-height);
-					border: 1px solid purple;
+					border: 2px dotted aqua;
 					position: relative;
 
 					.time-slot {
