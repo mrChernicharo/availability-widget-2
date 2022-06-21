@@ -18,6 +18,13 @@ export function getFormatedTime(time: number) {
 
 // *************************************************** //
 
+export function timeToYPos(startTime: number, columnHeight: number) {
+	const pxPerMinute = columnHeight / 1440;
+	const yPos = startTime * pxPerMinute;
+
+	return yPos;
+}
+
 export function yPosToTime(
 	yPos: number,
 	columnHeight: number,

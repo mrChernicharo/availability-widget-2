@@ -10,7 +10,7 @@ export default function AvailabilityWidget() {
 	const [columnHeight, setColumnHeight] = useState(0);
 
 	const getAvailableHeight = useMemo(
-		() => Math.min(COLUMN_HEIGHT, windowHeight - 100),
+		() => Math.min(COLUMN_HEIGHT, windowHeight - 200),
 		[windowHeight]
 	);
 
