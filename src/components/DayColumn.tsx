@@ -13,10 +13,22 @@ import TimeSlot from './TimeSlot';
 interface IProps {
 	weekday: string;
 	availableHeight: number;
+	onDrag: (e: PointerEvent<HTMLDivElement>, timeslot: ITimeslot) => void;
+	onResizeTop: (e: PointerEvent<HTMLDivElement>, timeslot: ITimeslot) => void;
+	onResizeBottom: (
+		e: PointerEvent<HTMLDivElement>,
+		timeslot: ITimeslot
+	) => void;
 	// containerRef: React.RefObject<HTMLDivElement>;
 }
 
-export default function DayColumn({ weekday, availableHeight }: IProps) {
+export default function DayColumn({
+	weekday,
+	availableHeight,
+	onDrag,
+	onResizeTop,
+	onResizeBottom,
+}: IProps) {
 	const [timeslots, setTimeslots] = useState<ITimeslot[]>([]);
 
 	const columnRef = useRef<HTMLDivElement>(null);
@@ -36,12 +48,6 @@ export default function DayColumn({ weekday, availableHeight }: IProps) {
 		);
 
 		if (hitSomething) {
-			console.log(
-				'HIT!!!',
-				timeslots.find(
-					slot => timeClicked >= slot.start && timeClicked <= slot.end
-				)
-			);
 			return;
 		}
 
@@ -84,6 +90,7 @@ export default function DayColumn({ weekday, availableHeight }: IProps) {
 			>
 				{GRID_LINE_HEIGHTS.map(H => (
 					<hr
+						key={nanoid()}
 						style={{
 							top: timeToYPos(H, availableHeight),
 						}}
@@ -95,6 +102,9 @@ export default function DayColumn({ weekday, availableHeight }: IProps) {
 						key={slot.id}
 						timeslot={slot}
 						availableHeight={availableHeight}
+						onDrag={onDrag}
+						onResizeTop={onResizeTop}
+						onResizeBottom={onResizeBottom}
 					/>
 				))}
 			</div>

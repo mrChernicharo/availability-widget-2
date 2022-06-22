@@ -36,7 +36,9 @@
 					background-color: var(--primary-color);
 					color: #fff;
 					@include flex();
+					user-select: none;
 				}
+
 				.column-content {
 					height: var(--column-height);
 					position: relative;
@@ -51,6 +53,7 @@
 						width: 100%;
 						background-color: coral;
 						opacity: 0.7;
+						user-select: none;
 
 						.top-drag-area,
 						.bottom-drag-area {
