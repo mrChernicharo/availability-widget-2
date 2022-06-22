@@ -122,3 +122,10 @@ export function handleTimeslotsMerge(
 		callback(newTimeslots);
 	}
 }
+
+// ************************************************  //
+
+const createTimeslotColumnUpdateEvent = (
+	timeslot: ITimeslot,
+	weekday: string
+) => new CustomEvent(`timeslotColumnUpdate:${weekday}`, { detail: timeslot });

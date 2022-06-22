@@ -12,6 +12,7 @@ export default function AvailabilityWidget() {
 	const isResizingTop = useRef(false);
 	const isResizingBottom = useRef(false);
 	const isDragging = useRef(false);
+	const selectedDay = useRef('');
 	const [cursor, setCursor] = useState('default');
 
 	function handlePointerMove(e: PointerEvent) {
@@ -27,7 +28,7 @@ export default function AvailabilityWidget() {
 
 		// dragging
 		if (isDragging.current) {
-			console.log(e.clientY, 'dragging');
+			console.log(e.clientY, selectedDay.current, 'dragging');
 		}
 	}
 
@@ -36,12 +37,17 @@ export default function AvailabilityWidget() {
 		isDragging.current = false;
 		isResizingTop.current = false;
 		isResizingBottom.current = false;
+		selectedDay.current = '';
 		// setCursor('default');
 	}
 
-	function handleDrag(e: PointerEvent<HTMLDivElement>, timeslot: ITimeslot) {
-		console.log('resizable:pointerdown', e, { timeslot });
-
+	function handleDrag(
+		e: PointerEvent<HTMLDivElement>,
+		timeslot: ITimeslot,
+		weekday: string
+	) {
+		console.log('resizable:pointerdown', e, { timeslot, weekday });
+		selectedDay.current = weekday;
 		isDragging.current = true;
 		// setCursor('move');
 	}
@@ -102,17 +108,18 @@ export default function AvailabilityWidget() {
 				<DayColumn
 					weekday="monday"
 					availableHeight={columnHeight}
-					onDrag={handleDrag}
+					onDrag={(e, timeslot) => handleDrag(e, timeslot, 'monday')}
 					onResizeTop={handleResizeTop}
 					onResizeBottom={handleResizeBottom}
 				/>
-				{/* <DayColumn
+				<DayColumn
 					weekday="tuesday"
 					availableHeight={columnHeight}
-					onDrag={handleDrag}
+					onDrag={(e, timeslot) => handleDrag(e, timeslot, 'tuesday')}
 					onResizeTop={handleResizeTop}
 					onResizeBottom={handleResizeBottom}
-				/> */}
+				/>
+
 				{/* <DayColumn weekday="wednesday" availableHeight={columnHeight} /> */}
 				{/* <DayColumn weekday="thursday" availableHeight={columnHeight} /> */}
 				{/* <DayColumn weekday="friday" availableHeight={columnHeight} /> */}

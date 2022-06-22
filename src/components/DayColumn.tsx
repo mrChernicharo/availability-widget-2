@@ -73,9 +73,26 @@ export default function DayColumn({
 		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
 	}
 
+	function handleSlotsChange(e: any) {
+		console.log(e);
+	}
+
 	useEffect(() => {
 		console.log(weekday, timeslots);
 	}, [timeslots]);
+
+	useEffect(() => {
+		document.addEventListener(
+			`timeslotColumnUpdate:${weekday}`,
+			handleSlotsChange
+		);
+
+		return () =>
+			document.removeEventListener(
+				`timeslotColumnUpdate:${weekday}`,
+				() => {}
+			);
+	}, []);
 
 	return (
 		<div className="day-column">
