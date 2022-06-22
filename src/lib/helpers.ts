@@ -35,6 +35,12 @@ export function setCSSVariable(key: string, val: string) {
 	document.documentElement.style.setProperty(key, val);
 }
 
+export function getCSSVariable(key: string) {
+	return getComputedStyle(document.documentElement)
+		.getPropertyValue(key)
+		.trim();
+}
+
 // ************************************************** //
 
 export function mergeTimeslots(

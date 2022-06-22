@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { PointerEvent, useEffect, useRef, useState } from 'react';
 import { GRID_LINE_HEIGHTS } from '../lib/constants';
 import {
+	getCSSVariable,
 	getElementRect,
 	handleTimeslotsMerge,
 	timeToYPos,
@@ -73,9 +74,21 @@ export default function DayColumn({
 		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
 	}
 
-	function handleSlotsChange(e: any) {
-		console.log('timeslotUpdateEvent', { ...e.detail });
-	}
+	const handleSlotsChange = (e: any) => {
+		// why availableHeight == 0 here?
+		// can't I closure it up?
+
+		const { yPos, yMovement, timeslot, columnHeight } = e.detail;
+		const { id, start, end } = timeslot;
+
+		const pointerTime = yPosToTime(
+			yPos,
+			columnHeight - parseInt(getCSSVariable('--heading-height')),
+			getElementRect(columnRef).top
+		);
+
+		console.log({ pointerTime, id, columnHeight });
+	};
 
 	useEffect(() => {
 		console.log(weekday, timeslots);
