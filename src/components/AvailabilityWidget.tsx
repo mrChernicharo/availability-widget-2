@@ -1,7 +1,7 @@
 import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowSize } from '../hooks/useWindowSize';
 import { COLUMN_HEIGHT } from '../lib/constants';
-import { setCSSVariable } from '../lib/helpers';
+import { createTimeslotDraggedEvent, setCSSVariable } from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
 import DayColumn from './DayColumn';
 
@@ -13,9 +13,19 @@ export default function AvailabilityWidget() {
 	const isResizingBottom = useRef(false);
 	const isDragging = useRef(false);
 	const selectedDay = useRef('');
+	const selectedTimeslot = useRef<null | ITimeslot>(null);
 	const [cursor, setCursor] = useState('default');
 
-	function handlePointerMove(e: PointerEvent) {
+	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
+	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
+	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
+
+	const getAvailableHeight = useMemo(
+		() => Math.min(COLUMN_HEIGHT, windowHeight - 200),
+		[windowHeight]
+	);
+
+	function handlePointerMove(e: any) {
 		// resizing top
 		if (isResizingTop.current) {
 			console.log(e.clientY, 'resizing top');
@@ -28,7 +38,21 @@ export default function AvailabilityWidget() {
 
 		// dragging
 		if (isDragging.current) {
-			console.log(e.clientY, selectedDay.current, 'dragging');
+			// console.log(
+			// 	e.clientY,
+			// 	selectedDay.current,
+			// 	'dragging',
+			// 	selectedTimeslot.current
+			// );
+			const timeslotDragEvent = createTimeslotDraggedEvent(
+				e.clientY,
+				e.movementY,
+				containerRef.current?.getBoundingClientRect().height!,
+				selectedTimeslot.current!,
+				selectedDay.current!
+			);
+
+			document.dispatchEvent(timeslotDragEvent);
 		}
 	}
 
@@ -38,6 +62,7 @@ export default function AvailabilityWidget() {
 		isResizingTop.current = false;
 		isResizingBottom.current = false;
 		selectedDay.current = '';
+		selectedTimeslot.current = null;
 		// setCursor('default');
 	}
 
@@ -49,6 +74,7 @@ export default function AvailabilityWidget() {
 		console.log('resizable:pointerdown', e, { timeslot, weekday });
 		selectedDay.current = weekday;
 		isDragging.current = true;
+		selectedTimeslot.current = timeslot;
 		// setCursor('move');
 	}
 
@@ -75,13 +101,10 @@ export default function AvailabilityWidget() {
 		// setCursor('row-resize');
 	}
 
-	const getAvailableHeight = useMemo(
-		() => Math.min(COLUMN_HEIGHT, windowHeight - 200),
-		[windowHeight]
-	);
-
 	useEffect(() => {
 		setColumnHeight(getAvailableHeight);
+
+		console.log(columnHeight);
 	}, [windowHeight]);
 
 	useEffect(() => {

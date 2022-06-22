@@ -74,7 +74,7 @@ export default function DayColumn({
 	}
 
 	function handleSlotsChange(e: any) {
-		console.log(e);
+		console.log('timeslotUpdateEvent', { ...e.detail });
 	}
 
 	useEffect(() => {
@@ -82,14 +82,18 @@ export default function DayColumn({
 	}, [timeslots]);
 
 	useEffect(() => {
+		console.log({ availableHeight });
+	}, [availableHeight]);
+
+	useEffect(() => {
 		document.addEventListener(
-			`timeslotColumnUpdate:${weekday}`,
+			`timeslotDragged:${weekday}`,
 			handleSlotsChange
 		);
 
 		return () =>
 			document.removeEventListener(
-				`timeslotColumnUpdate:${weekday}`,
+				`timeslotDragged:${weekday}`,
 				() => {}
 			);
 	}, []);

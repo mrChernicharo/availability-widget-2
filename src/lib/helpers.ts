@@ -1,25 +1,11 @@
 import { nanoid } from 'nanoid';
 import { ITimeslot } from './types';
 
-export function getHoursFromTime(time: number) {
-	return Math.floor(time / 60);
+export function pxToTime(yVariation: number, columnHeight: number) {
+	const minutePerPx = 1440 / columnHeight;
+
+	console.log({ columnHeight, minutePerPx, yVariation });
 }
-
-export function getMinutesFromTime(time: number) {
-	return Math.floor(time % 60);
-}
-
-export function formatTimeUnit(time: number) {
-	return time >= 10 ? `${time}` : `0${time}`;
-}
-
-export function getFormatedTime(time: number) {
-	const [h, m] = [getHoursFromTime(time), getMinutesFromTime(time)];
-
-	return `${formatTimeUnit(h)}:${formatTimeUnit(m)}`;
-}
-
-// *************************************************** //
 
 export function timeToYPos(startTime: number, columnHeight: number) {
 	const pxPerMinute = columnHeight / 1440;
@@ -125,7 +111,34 @@ export function handleTimeslotsMerge(
 
 // ************************************************  //
 
-const createTimeslotColumnUpdateEvent = (
+export const createTimeslotDraggedEvent = (
+	yPos: number,
+	yMovement: number,
+	columnHeight: number,
 	timeslot: ITimeslot,
 	weekday: string
-) => new CustomEvent(`timeslotColumnUpdate:${weekday}`, { detail: timeslot });
+) => {
+	return new CustomEvent(`timeslotDragged:${weekday}`, {
+		detail: { yPos, yMovement, timeslot, columnHeight },
+	});
+};
+
+// *************************************************** //
+
+export function getHoursFromTime(time: number) {
+	return Math.floor(time / 60);
+}
+
+export function getMinutesFromTime(time: number) {
+	return Math.floor(time % 60);
+}
+
+export function formatTimeUnit(time: number) {
+	return time >= 10 ? `${time}` : `0${time}`;
+}
+
+export function getFormatedTime(time: number) {
+	const [h, m] = [getHoursFromTime(time), getMinutesFromTime(time)];
+
+	return `${formatTimeUnit(h)}:${formatTimeUnit(m)}`;
+}
