@@ -76,8 +76,10 @@ export function findOverlappingSlots(
 	timeSlot: ITimeslot,
 	timeSlots: ITimeslot[]
 ) {
+	if (!timeSlot.start || !timeSlot.end) return;
+
 	const { start, end } = timeSlot;
-	// check if should merge timeslots
+
 	// prettier-ignore
 	const overlappingItems = timeSlots.filter(
 		(s, i) =>
@@ -96,7 +98,7 @@ export function handleTimeslotsMerge(
 ) {
 	const overlappingItems = findOverlappingSlots(newTimeSlot, newTimeslots);
 
-	if (overlappingItems.length) {
+	if (overlappingItems && overlappingItems.length) {
 		const overlappingIds = overlappingItems
 			.map(item => item.id)
 			.concat(newTimeSlot.id);
@@ -124,7 +126,6 @@ export const createTimeslotDraggedEvent = (
 ) => {
 	return new CustomEvent(`timeslotDragged:${weekday}`, {
 		detail: { yPos, timeslot },
-		// detail: { yPos, yMovement, timeslot, columnHeight },
 	});
 };
 
@@ -146,6 +147,12 @@ export function getFormatedTime(time: number) {
 	const [h, m] = [getHoursFromTime(time), getMinutesFromTime(time)];
 
 	return `${formatTimeUnit(h)}:${formatTimeUnit(m)}`;
+}
+
+export function getFormatedTimeFromSlot(slot: ITimeslot) {
+	const { start, end } = slot;
+
+	return `${getFormatedTime(start)} - ${getFormatedTime(end)}`;
 }
 
 //

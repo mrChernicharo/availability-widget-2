@@ -1,6 +1,6 @@
 import { PointerEvent, useEffect, useState } from 'react';
 import { COLUMN_HEIGHT } from '../lib/constants';
-import { timeToYPos } from '../lib/helpers';
+import { getFormatedTimeFromSlot, timeToYPos } from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
 
 interface ITimeSlotProps {
@@ -45,7 +45,9 @@ export default function TimeSlot({
 				onPointerDown={(e: PointerEvent<HTMLDivElement>) =>
 					onDrag(e, timeslot)
 				}
-			></div>
+			>
+				{getFormatedTimeFromSlot(timeslot)}
+			</div>
 			<div
 				className="bottom-drag-area"
 				onPointerDown={(e: PointerEvent<HTMLDivElement>) =>
