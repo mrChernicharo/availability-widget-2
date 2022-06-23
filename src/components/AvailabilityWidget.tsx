@@ -6,7 +6,6 @@ import { ITimeslot } from '../lib/types';
 import DayColumn from './DayColumn';
 
 export default function AvailabilityWidget() {
-	// const { windowHeight } = useWindowSize();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isResizingTop = useRef(false);
 	const isResizingBottom = useRef(false);
@@ -17,11 +16,6 @@ export default function AvailabilityWidget() {
 	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
 	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
 	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
-
-	// const getAvailableHeight = useMemo(
-	// 	() => Math.min(COLUMN_HEIGHT, windowHeight - 200),
-	// 	[windowHeight]
-	// );
 
 	function handlePointerMove(e: any) {
 		// resizing top
@@ -36,12 +30,6 @@ export default function AvailabilityWidget() {
 
 		// dragging
 		if (isDragging.current) {
-			// console.log(
-			// 	e.clientY,
-			// 	selectedDay.current,
-			// 	'dragging',
-			// 	selectedTimeslot.current
-			// );
 			const timeslotDragEvent = createTimeslotDraggedEvent(
 				e.clientY,
 				e.movementY,
@@ -56,12 +44,12 @@ export default function AvailabilityWidget() {
 
 	function handlePointerUp(e: any) {
 		console.log('document:handlePointerUp', e);
+
 		isDragging.current = false;
 		isResizingTop.current = false;
 		isResizingBottom.current = false;
 		selectedDay.current = '';
 		selectedTimeslot.current = null;
-		// setCursor('default');
 	}
 
 	function handleDrag(
@@ -69,7 +57,6 @@ export default function AvailabilityWidget() {
 		timeslot: ITimeslot,
 		weekday: string
 	) {
-		// console.log('resizable:pointerdown', e, { timeslot, weekday });
 		selectedDay.current = weekday;
 		isDragging.current = true;
 		selectedTimeslot.current = { ...timeslot };

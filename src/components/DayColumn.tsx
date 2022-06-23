@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import { nanoid } from 'nanoid';
 import { PointerEvent, useEffect, useRef, useState } from 'react';
 import { COLUMN_HEIGHT, GRID_LINE_HEIGHTS } from '../lib/constants';
@@ -60,35 +61,33 @@ export default function DayColumn({
 			[slotStart, slotEnd] = [1380, 1440];
 		}
 
-		// newSlot will span for 1h. The click position will be in the exact middle of the timeSlot
 		const newTimeSlot = {
 			id: nanoid(),
 			start: slotStart,
 			end: slotEnd,
-		};
+		} as ITimeslot;
 
 		const newTimeslots = [...timeslots, newTimeSlot];
-		// setTimeslots(newTimeslots);
 
 		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
 	}
 
 	const handleSlotsChange = (e: any) => {
-		const { yPos, yMovement, timeslot: slot, columnHeight } = e.detail;
-		const { id, start, end } = slot;
+		const { timeslot: slot, yPos } = e.detail;
+		const { id } = slot;
 
 		const { height } = document
 			.querySelector(`#${id}`)
 			?.getBoundingClientRect()!;
 
 		let newStart = yPosToTime(
-			e.detail.yPos - height,
+			yPos - height,
 			getElementRect(columnRef).height,
 			getElementRect(columnRef).top
 		);
 
 		let newEnd = yPosToTime(
-			e.detail.yPos,
+			yPos,
 			getElementRect(columnRef).height,
 			getElementRect(columnRef).top
 		);
@@ -104,8 +103,23 @@ export default function DayColumn({
 			end: newEnd,
 		};
 
-		setTimeslots(ts => [...ts.filter(s => s.id !== newSlot.id), newSlot]);
+		setTimeslots(ts => {
+			const newSlots = [...ts.filter(s => s.id !== newSlot.id), newSlot];
+
+			const slotsUpdated = new CustomEvent(`timeslotsMerge::${weekday}`, {
+				detail: { newSlots, newSlot },
+			});
+			window.dispatchEvent(slotsUpdated);
+
+			return newSlots;
+		});
 	};
+
+	function handleSlotsMerge(e: any) {
+		const { newSlots, newSlot } = e.detail;
+
+		handleTimeslotsMerge(newSlot, newSlots, setTimeslots);
+	}
 
 	useEffect(() => {
 		window.addEventListener(
@@ -113,15 +127,27 @@ export default function DayColumn({
 			handleSlotsChange
 		);
 
+		window.addEventListener(
+			`timeslotsMerge::${weekday}`,
+			debounce(handleSlotsMerge, 200)
+		);
+
 		return () => {
 			window.removeEventListener(
 				`timeslotDragged:${weekday}`,
 				handleSlotsChange
 			);
+
+			window.removeEventListener(
+				`timeslotsMerge::${weekday}`,
+				handleSlotsMerge
+			);
 		};
 	}, []);
 
-	useEffect(() => console.log(timeslots), [timeslots]);
+	useEffect(() => {
+		console.log(timeslots);
+	}, [timeslots]);
 
 	return (
 		<div className="day-column">

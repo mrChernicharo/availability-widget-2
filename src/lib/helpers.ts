@@ -127,6 +127,7 @@ export const createTimeslotDraggedEvent = (
 ) => {
 	return new CustomEvent(`timeslotDragged:${weekday}`, {
 		detail: { yPos, yMovement, timeslot, columnHeight },
+		// detail: { yPos, yMovement, timeslot, columnHeight },
 	});
 };
 
