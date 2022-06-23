@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { ITimeslot } from './types';
 
 export function pxToTime(yVariation: number, columnHeight: number) {
@@ -55,7 +54,7 @@ export function mergeTimeslots(
 	const mergedSlot = overlapping.reduce(
 		(acc, next) => {
 			acc = {
-				id: nanoid(),
+				id: idMaker(),
 				start: Math.min(acc.start, next.start),
 				end: Math.max(acc.end, next.end),
 			};
@@ -120,13 +119,11 @@ export function handleTimeslotsMerge(
 
 export const createTimeslotDraggedEvent = (
 	yPos: number,
-	yMovement: number,
-	columnHeight: number,
 	timeslot: ITimeslot,
 	weekday: string
 ) => {
 	return new CustomEvent(`timeslotDragged:${weekday}`, {
-		detail: { yPos, yMovement, timeslot, columnHeight },
+		detail: { yPos, timeslot },
 		// detail: { yPos, yMovement, timeslot, columnHeight },
 	});
 };
@@ -150,3 +147,15 @@ export function getFormatedTime(time: number) {
 
 	return `${formatTimeUnit(h)}:${formatTimeUnit(m)}`;
 }
+
+//
+
+const idChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-';
+export const idMaker = () =>
+	Array(12)
+		.fill(0)
+		.map(
+			item =>
+				idChars.split('')[Math.round(Math.random() * idChars.length)]
+		)
+		.join('');

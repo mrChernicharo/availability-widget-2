@@ -1,7 +1,6 @@
-import { nanoid } from 'nanoid';
 import { PointerEvent, useEffect, useRef } from 'react';
 import { WEEKDAYS } from '../lib/constants';
-import { createTimeslotDraggedEvent } from '../lib/helpers';
+import { createTimeslotDraggedEvent, idMaker } from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
 import DayColumn from './DayColumn';
 
@@ -32,8 +31,6 @@ export default function AvailabilityWidget() {
 		if (isDragging.current) {
 			const timeslotDragEvent = createTimeslotDraggedEvent(
 				e.clientY,
-				e.movementY,
-				containerRef.current?.getBoundingClientRect().height!,
 				selectedTimeslot.current!,
 				selectedDay.current!
 			);
@@ -107,7 +104,7 @@ export default function AvailabilityWidget() {
 			<div ref={containerRef} className="columns-container">
 				{WEEKDAYS.map(day => (
 					<DayColumn
-						key={nanoid()}
+						key={idMaker()}
 						weekday={day}
 						onDrag={(e, timeslot) => handleDrag(e, timeslot, day)}
 						onResizeTop={handleResizeTop}

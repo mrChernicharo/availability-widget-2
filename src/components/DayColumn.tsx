@@ -1,10 +1,10 @@
 import { debounce } from 'lodash';
-import { nanoid } from 'nanoid';
 import { PointerEvent, useEffect, useRef, useState } from 'react';
 import { COLUMN_HEIGHT, GRID_LINE_HEIGHTS } from '../lib/constants';
 import {
 	getElementRect,
 	handleTimeslotsMerge,
+	idMaker,
 	timeToYPos,
 	yPosToTime,
 } from '../lib/helpers';
@@ -62,7 +62,7 @@ export default function DayColumn({
 		}
 
 		const newTimeSlot = {
-			id: nanoid(),
+			id: idMaker(),
 			start: slotStart,
 			end: slotEnd,
 		} as ITimeslot;
@@ -79,6 +79,8 @@ export default function DayColumn({
 		const { height } = document
 			.querySelector(`#${id}`)
 			?.getBoundingClientRect()!;
+
+		if (!height) return;
 
 		let newStart = yPosToTime(
 			yPos - height,
@@ -162,7 +164,7 @@ export default function DayColumn({
 			>
 				{GRID_LINE_HEIGHTS.map(H => (
 					<hr
-						key={nanoid()}
+						key={idMaker()}
 						style={{
 							top: timeToYPos(H, COLUMN_HEIGHT),
 						}}

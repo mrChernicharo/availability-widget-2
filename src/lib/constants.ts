@@ -1,4 +1,5 @@
 // export const COLUMN_HEIGHT = 1468;
+// export const COLUMN_HEIGHT = 968;
 export const COLUMN_HEIGHT = 768;
 
 export const WEEKDAYS = [
