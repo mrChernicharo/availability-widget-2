@@ -1,6 +1,7 @@
+import { nanoid } from 'nanoid';
 import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowSize } from '../hooks/useWindowSize';
-import { COLUMN_HEIGHT } from '../lib/constants';
+import { COLUMN_HEIGHT, WEEKDAYS } from '../lib/constants';
 import { createTimeslotDraggedEvent, setCSSVariable } from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
 import DayColumn from './DayColumn';
@@ -117,8 +118,8 @@ export default function AvailabilityWidget() {
 		window.addEventListener('pointerup', handlePointerUp);
 
 		return () => {
-			window.removeEventListener(`pointermove`, handlePointerMove);
-			window.removeEventListener(`pointerup`, handlePointerUp);
+			window.removeEventListener(`pointermove`, () => {});
+			window.removeEventListener(`pointerup`, () => {});
 		};
 	}, []);
 
@@ -131,20 +132,16 @@ export default function AvailabilityWidget() {
 			<h1>Availability Widget</h1>
 
 			<div ref={containerRef} className="columns-container">
-				<DayColumn
-					weekday="monday"
-					availableHeight={columnHeight}
-					onDrag={(e, timeslot) => handleDrag(e, timeslot, 'monday')}
-					onResizeTop={handleResizeTop}
-					onResizeBottom={handleResizeBottom}
-				/>
-				<DayColumn
-					weekday="tuesday"
-					availableHeight={columnHeight}
-					onDrag={(e, timeslot) => handleDrag(e, timeslot, 'tuesday')}
-					onResizeTop={handleResizeTop}
-					onResizeBottom={handleResizeBottom}
-				/>
+				{WEEKDAYS.map(day => (
+					<DayColumn
+						key={nanoid()}
+						weekday={day}
+						availableHeight={columnHeight}
+						onDrag={(e, timeslot) => handleDrag(e, timeslot, day)}
+						onResizeTop={handleResizeTop}
+						onResizeBottom={handleResizeBottom}
+					/>
+				))}
 
 				{/* <DayColumn weekday="wednesday" availableHeight={columnHeight} /> */}
 				{/* <DayColumn weekday="thursday" availableHeight={columnHeight} /> */}

@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid';
-import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { PointerEvent, useEffect, useRef, useState } from 'react';
 import { GRID_LINE_HEIGHTS } from '../lib/constants';
 import {
+	getCSSVariable,
 	getElementRect,
 	handleTimeslotsMerge,
 	timeToYPos,
@@ -33,9 +34,10 @@ export default function DayColumn({
 
 	const columnRef = useRef<HTMLDivElement>(null);
 
-	function handleColumnClick(e: PointerEvent<HTMLDivElement>) {
+	function handleColumnClick(e: any) {
+		console.log(e);
 		const timeClicked = yPosToTime(
-			e.clientY,
+			e.detail.yPos || e.clientY,
 			availableHeight,
 			getElementRect(columnRef).top + 4
 			// getElementRect(columnRef).top
@@ -73,7 +75,8 @@ export default function DayColumn({
 		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
 	}
 
-	const handleSlotsChange = useCallback(
+	const handleSlotsChange =
+		// useCallback(
 		(e: any) => {
 			// why availableHeight == 0 here?
 			// can't I closure it up?
@@ -85,10 +88,10 @@ export default function DayColumn({
 
 			const pointerTime = yPosToTime(
 				yPos,
-				// columnHeight
-				height,
-				// columnHeight - parseInt(getCSSVariable('--heading-height')),
-				top
+				columnHeight,
+				// height,
+				columnHeight - parseInt(getCSSVariable('--heading-height'))
+				// top
 			);
 
 			const newSlot: ITimeslot = {
@@ -97,10 +100,13 @@ export default function DayColumn({
 				end: pointerTime + 30,
 			};
 
-			console.log(id, newSlot.id, timeslots);
-		},
-		[timeslots]
-	);
+			console.log(e, id, newSlot.id, timeslots);
+
+			handleColumnClick(e);
+		};
+	// ,
+	// [timeslots]
+	// )
 
 	useEffect(() => {
 		console.log({ availableHeight });
