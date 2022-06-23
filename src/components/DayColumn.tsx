@@ -81,22 +81,27 @@ export default function DayColumn({
 			.querySelector(`#${id}`)
 			?.getBoundingClientRect()!;
 
-		const timeClicked = yPosToTime(
-			e.detail.yPos,
-			getElementRect(columnRef).height,
-			getElementRect(columnRef).top
-		);
-
-		const bottom = yPosToTime(
+		let newStart = yPosToTime(
 			e.detail.yPos - height,
 			getElementRect(columnRef).height,
 			getElementRect(columnRef).top
 		);
 
+		let newEnd = yPosToTime(
+			e.detail.yPos,
+			getElementRect(columnRef).height,
+			getElementRect(columnRef).top
+		);
+
+		if (newStart <= 0) return;
+		if (newStart >= 1440 - height) return;
+		if (newEnd <= height) return;
+		if (newEnd >= 1440) return;
+
 		const newSlot: ITimeslot = {
 			id,
-			start: timeClicked,
-			end: bottom,
+			start: newStart,
+			end: newEnd,
 		};
 
 		setTimeslots(ts => [...ts.filter(s => s.id !== newSlot.id), newSlot]);
