@@ -1,8 +1,7 @@
 import { nanoid } from 'nanoid';
-import { PointerEvent, useEffect, useRef, useState } from 'react';
+import { PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { GRID_LINE_HEIGHTS } from '../lib/constants';
 import {
-	getCSSVariable,
 	getElementRect,
 	handleTimeslotsMerge,
 	timeToYPos,
@@ -74,42 +73,56 @@ export default function DayColumn({
 		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
 	}
 
-	const handleSlotsChange = (e: any) => {
-		// why availableHeight == 0 here?
-		// can't I closure it up?
+	const handleSlotsChange = useCallback(
+		(e: any) => {
+			// why availableHeight == 0 here?
+			// can't I closure it up?
 
-		const { yPos, yMovement, timeslot, columnHeight } = e.detail;
-		const { id, start, end } = timeslot;
+			const { yPos, yMovement, timeslot, columnHeight } = e.detail;
+			const { id, start, end } = timeslot;
 
-		const pointerTime = yPosToTime(
-			yPos,
-			columnHeight - parseInt(getCSSVariable('--heading-height')),
-			getElementRect(columnRef).top
-		);
+			const { top, height } = getElementRect(columnRef)!;
 
-		console.log({ pointerTime, id, columnHeight });
-	};
+			const pointerTime = yPosToTime(
+				yPos,
+				// columnHeight
+				height,
+				// columnHeight - parseInt(getCSSVariable('--heading-height')),
+				top
+			);
 
-	useEffect(() => {
-		console.log(weekday, timeslots);
-	}, [timeslots]);
+			const newSlot: ITimeslot = {
+				id,
+				start: pointerTime - 30,
+				end: pointerTime + 30,
+			};
+
+			console.log(id, newSlot.id, timeslots);
+		},
+		[timeslots]
+	);
 
 	useEffect(() => {
 		console.log({ availableHeight });
 	}, [availableHeight]);
 
 	useEffect(() => {
-		document.addEventListener(
+		console.log(window);
+
+		window.addEventListener(
 			`timeslotDragged:${weekday}`,
 			handleSlotsChange
 		);
 
-		return () =>
-			document.removeEventListener(
+		console.log(weekday, timeslots);
+
+		return () => {
+			window.removeEventListener(
 				`timeslotDragged:${weekday}`,
-				() => {}
+				handleSlotsChange
 			);
-	}, []);
+		};
+	}, [timeslots]);
 
 	return (
 		<div className="day-column">

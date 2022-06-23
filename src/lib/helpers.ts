@@ -22,7 +22,8 @@ export function yPosToTime(
 	const columnYClick = yPos - columnTop;
 	const ClickVerticalPercentage = (columnYClick / columnHeight) * 100;
 	const timeClicked = (ClickVerticalPercentage * 1440) / 100;
-	return Math.abs(Math.round(timeClicked));
+	return Math.round(timeClicked);
+	// return Math.abs(Math.round(timeClicked));
 }
 
 // *************************************************  //

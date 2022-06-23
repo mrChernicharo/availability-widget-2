@@ -52,11 +52,11 @@ export default function AvailabilityWidget() {
 				selectedDay.current!
 			);
 
-			document.dispatchEvent(timeslotDragEvent);
+			window.dispatchEvent(timeslotDragEvent);
 		}
 	}
 
-	function handlePointerUp(e: PointerEvent) {
+	function handlePointerUp(e: any) {
 		console.log('document:handlePointerUp', e);
 		isDragging.current = false;
 		isResizingTop.current = false;
@@ -113,10 +113,13 @@ export default function AvailabilityWidget() {
 	}, [columnHeight]);
 
 	useEffect(() => {
-		// @ts-ignore
-		document.addEventListener('pointermove', handlePointerMove);
-		// @ts-ignore
-		document.addEventListener('pointerup', handlePointerUp);
+		window.addEventListener('pointermove', handlePointerMove);
+		window.addEventListener('pointerup', handlePointerUp);
+
+		return () => {
+			window.removeEventListener(`pointermove`, handlePointerMove);
+			window.removeEventListener(`pointerup`, handlePointerUp);
+		};
 	}, []);
 
 	// useEffect(() => {
