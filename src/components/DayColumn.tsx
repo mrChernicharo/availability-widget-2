@@ -73,28 +73,31 @@ export default function DayColumn({
 		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
 	}
 
-	function setThisShit(val: ITimeslot[]) {
-		setTimeslots(val);
-	}
-
 	const handleSlotsChange = (e: any) => {
 		const { yPos, yMovement, timeslot: slot, columnHeight } = e.detail;
 		const { id, start, end } = slot;
+
+		const { height } = document
+			.querySelector(`#${id}`)
+			?.getBoundingClientRect()!;
 
 		const timeClicked = yPosToTime(
 			e.detail.yPos,
 			getElementRect(columnRef).height,
 			getElementRect(columnRef).top
-			// getElementRect(columnRef).top
+		);
+
+		const bottom = yPosToTime(
+			e.detail.yPos - height,
+			getElementRect(columnRef).height,
+			getElementRect(columnRef).top
 		);
 
 		const newSlot: ITimeslot = {
 			id,
 			start: timeClicked,
-			end: timeClicked + 60,
+			end: bottom,
 		};
-
-		console.log(newSlot, yPos, timeClicked);
 
 		setTimeslots(ts => [...ts.filter(s => s.id !== newSlot.id), newSlot]);
 	};
@@ -111,7 +114,9 @@ export default function DayColumn({
 				handleSlotsChange
 			);
 		};
-	}, [timeslots]);
+	}, []);
+
+	useEffect(() => console.log(timeslots), [timeslots]);
 
 	return (
 		<div className="day-column">

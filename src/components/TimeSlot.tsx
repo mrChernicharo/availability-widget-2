@@ -21,7 +21,7 @@ export default function TimeSlot({
 }: ITimeSlotProps) {
 	const [top, setTop] = useState('-1000px');
 	const [height, setHeight] = useState('0px');
-	const { start, end } = timeslot;
+	const { id, start, end } = timeslot;
 
 	useEffect(() => {
 		setTop(timeToYPos(start, COLUMN_HEIGHT) + 'px');
@@ -33,7 +33,7 @@ export default function TimeSlot({
 	}, [timeslot]);
 
 	return (
-		<div className="time-slot" style={{ top, height }}>
+		<div id={id} className="time-slot" style={{ top, height }}>
 			<div
 				className="top-drag-area"
 				onPointerDown={(e: PointerEvent<HTMLDivElement>) =>
