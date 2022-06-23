@@ -148,7 +148,7 @@ export default function DayColumn({
 	}, []);
 
 	useEffect(() => {
-		console.log(timeslots);
+		// console.log(timeslots);
 	}, [timeslots]);
 
 	return (

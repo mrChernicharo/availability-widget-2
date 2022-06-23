@@ -132,7 +132,8 @@ export const createTimeslotDraggedEvent = (
 // *************************************************** //
 
 export function getHoursFromTime(time: number) {
-	const res = Math.floor(time / 60);
+	let res = Math.floor(time / 60);
+	if (res === 24) res = 0; // we don't want 24:00
 	return Number.isNaN(res) ? 0 : res;
 }
 
