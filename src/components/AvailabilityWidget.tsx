@@ -1,30 +1,27 @@
 import { nanoid } from 'nanoid';
-import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { useWindowSize } from '../hooks/useWindowSize';
-import { COLUMN_HEIGHT, WEEKDAYS } from '../lib/constants';
-import { createTimeslotDraggedEvent, setCSSVariable } from '../lib/helpers';
+import { PointerEvent, useEffect, useRef } from 'react';
+import { WEEKDAYS } from '../lib/constants';
+import { createTimeslotDraggedEvent } from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
 import DayColumn from './DayColumn';
 
 export default function AvailabilityWidget() {
-	const { windowHeight } = useWindowSize();
+	// const { windowHeight } = useWindowSize();
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [columnHeight, setColumnHeight] = useState(0);
 	const isResizingTop = useRef(false);
 	const isResizingBottom = useRef(false);
 	const isDragging = useRef(false);
 	const selectedDay = useRef('');
 	const selectedTimeslot = useRef<null | ITimeslot>(null);
-	const [cursor, setCursor] = useState('default');
 
 	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
 	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
 	// GOTTA REFAC THIS HEIGHT/HEIGHT RESIZE LOGIC !!!
 
-	const getAvailableHeight = useMemo(
-		() => Math.min(COLUMN_HEIGHT, windowHeight - 200),
-		[windowHeight]
-	);
+	// const getAvailableHeight = useMemo(
+	// 	() => Math.min(COLUMN_HEIGHT, windowHeight - 200),
+	// 	[windowHeight]
+	// );
 
 	function handlePointerMove(e: any) {
 		// resizing top
@@ -72,10 +69,10 @@ export default function AvailabilityWidget() {
 		timeslot: ITimeslot,
 		weekday: string
 	) {
-		console.log('resizable:pointerdown', e, { timeslot, weekday });
+		// console.log('resizable:pointerdown', e, { timeslot, weekday });
 		selectedDay.current = weekday;
 		isDragging.current = true;
-		selectedTimeslot.current = timeslot;
+		selectedTimeslot.current = { ...timeslot };
 		// setCursor('move');
 	}
 
@@ -103,23 +100,12 @@ export default function AvailabilityWidget() {
 	}
 
 	useEffect(() => {
-		setColumnHeight(getAvailableHeight);
-
-		console.log(columnHeight);
-	}, [windowHeight]);
-
-	useEffect(() => {
-		const heightStr = getAvailableHeight + 'px';
-		setCSSVariable('--column-height', heightStr);
-	}, [columnHeight]);
-
-	useEffect(() => {
 		window.addEventListener('pointermove', handlePointerMove);
 		window.addEventListener('pointerup', handlePointerUp);
 
 		return () => {
-			window.removeEventListener(`pointermove`, () => {});
-			window.removeEventListener(`pointerup`, () => {});
+			window.removeEventListener(`pointermove`, () => handlePointerMove);
+			window.removeEventListener(`pointerup`, () => handlePointerUp);
 		};
 	}, []);
 
@@ -136,19 +122,11 @@ export default function AvailabilityWidget() {
 					<DayColumn
 						key={nanoid()}
 						weekday={day}
-						availableHeight={columnHeight}
 						onDrag={(e, timeslot) => handleDrag(e, timeslot, day)}
 						onResizeTop={handleResizeTop}
 						onResizeBottom={handleResizeBottom}
 					/>
 				))}
-
-				{/* <DayColumn weekday="wednesday" availableHeight={columnHeight} /> */}
-				{/* <DayColumn weekday="thursday" availableHeight={columnHeight} /> */}
-				{/* <DayColumn weekday="friday" availableHeight={columnHeight} /> */}
-				{/* <DayColumn weekday="saturday" availableHeight={columnHeight} /> */}
-				{/* <DayColumn weekday="sunday" availableHeight={columnHeight} /> */}
-				{/* <DayColumn weekday="tuesday" containerRef={containerRef} /> */}
 			</div>
 		</div>
 	);

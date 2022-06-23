@@ -1,10 +1,10 @@
 import { PointerEvent, useEffect, useState } from 'react';
+import { COLUMN_HEIGHT } from '../lib/constants';
 import { timeToYPos } from '../lib/helpers';
 import { ITimeslot } from '../lib/types';
 
 interface ITimeSlotProps {
 	timeslot: ITimeslot;
-	availableHeight: number;
 	onDrag: (e: PointerEvent<HTMLDivElement>, timeslot: ITimeslot) => void;
 	onResizeTop: (e: PointerEvent<HTMLDivElement>, timeslot: ITimeslot) => void;
 	onResizeBottom: (
@@ -15,7 +15,6 @@ interface ITimeSlotProps {
 
 export default function TimeSlot({
 	timeslot,
-	availableHeight,
 	onDrag,
 	onResizeTop,
 	onResizeBottom,
@@ -25,13 +24,13 @@ export default function TimeSlot({
 	const { start, end } = timeslot;
 
 	useEffect(() => {
-		setTop(timeToYPos(start, availableHeight) + 'px');
+		setTop(timeToYPos(start, COLUMN_HEIGHT) + 'px');
 		setHeight(
-			timeToYPos(end, availableHeight) -
-				timeToYPos(start, availableHeight) +
+			timeToYPos(end, COLUMN_HEIGHT) -
+				timeToYPos(start, COLUMN_HEIGHT) +
 				'px'
 		);
-	}, [availableHeight]);
+	}, [timeslot]);
 
 	return (
 		<div className="time-slot" style={{ top, height }}>

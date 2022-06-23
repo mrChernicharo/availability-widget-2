@@ -4,7 +4,7 @@ import { ITimeslot } from './types';
 export function pxToTime(yVariation: number, columnHeight: number) {
 	const minutePerPx = 1440 / columnHeight;
 
-	console.log({ columnHeight, minutePerPx, yVariation });
+	// console.log({ columnHeight, minutePerPx, yVariation });
 }
 
 export function timeToYPos(startTime: number, columnHeight: number) {
@@ -68,7 +68,7 @@ export function mergeTimeslots(
 		}
 	);
 
-	console.log('mergedSlot', mergedSlot);
+	// console.log('mergedSlot', mergedSlot);
 
 	return mergedSlot;
 }

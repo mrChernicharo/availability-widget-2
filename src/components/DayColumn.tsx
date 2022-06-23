@@ -1,8 +1,7 @@
 import { nanoid } from 'nanoid';
 import { PointerEvent, useEffect, useRef, useState } from 'react';
-import { GRID_LINE_HEIGHTS } from '../lib/constants';
+import { COLUMN_HEIGHT, GRID_LINE_HEIGHTS } from '../lib/constants';
 import {
-	getCSSVariable,
 	getElementRect,
 	handleTimeslotsMerge,
 	timeToYPos,
@@ -13,7 +12,6 @@ import TimeSlot from './TimeSlot';
 
 interface IProps {
 	weekday: string;
-	availableHeight: number;
 	onDrag: (e: PointerEvent<HTMLDivElement>, timeslot: ITimeslot) => void;
 	onResizeTop: (e: PointerEvent<HTMLDivElement>, timeslot: ITimeslot) => void;
 	onResizeBottom: (
@@ -25,7 +23,6 @@ interface IProps {
 
 export default function DayColumn({
 	weekday,
-	availableHeight,
 	onDrag,
 	onResizeTop,
 	onResizeBottom,
@@ -35,15 +32,15 @@ export default function DayColumn({
 	const columnRef = useRef<HTMLDivElement>(null);
 
 	function handleColumnClick(e: any) {
-		console.log(e);
+		// console.log(e);
 		const timeClicked = yPosToTime(
 			e.detail.yPos || e.clientY,
-			availableHeight,
+			COLUMN_HEIGHT,
 			getElementRect(columnRef).top + 4
 			// getElementRect(columnRef).top
 		);
 
-		console.log({ timeClicked });
+		// console.log({ timeClicked });
 
 		const hitSomething = timeslots.find(
 			slot => timeClicked >= slot.start && timeClicked <= slot.end
@@ -71,56 +68,42 @@ export default function DayColumn({
 		};
 
 		const newTimeslots = [...timeslots, newTimeSlot];
+		// setTimeslots(newTimeslots);
 
 		handleTimeslotsMerge(newTimeSlot, newTimeslots, setTimeslots);
 	}
 
-	const handleSlotsChange =
-		// useCallback(
-		(e: any) => {
-			// why availableHeight == 0 here?
-			// can't I closure it up?
+	function setThisShit(val: ITimeslot[]) {
+		setTimeslots(val);
+	}
 
-			const { yPos, yMovement, timeslot, columnHeight } = e.detail;
-			const { id, start, end } = timeslot;
+	const handleSlotsChange = (e: any) => {
+		const { yPos, yMovement, timeslot: slot, columnHeight } = e.detail;
+		const { id, start, end } = slot;
 
-			const { top, height } = getElementRect(columnRef)!;
+		const timeClicked = yPosToTime(
+			e.detail.yPos,
+			getElementRect(columnRef).height,
+			getElementRect(columnRef).top
+			// getElementRect(columnRef).top
+		);
 
-			const pointerTime = yPosToTime(
-				yPos,
-				columnHeight,
-				// height,
-				columnHeight - parseInt(getCSSVariable('--heading-height'))
-				// top
-			);
-
-			const newSlot: ITimeslot = {
-				id,
-				start: pointerTime - 30,
-				end: pointerTime + 30,
-			};
-
-			console.log(e, id, newSlot.id, timeslots);
-
-			handleColumnClick(e);
+		const newSlot: ITimeslot = {
+			id,
+			start: timeClicked,
+			end: timeClicked + 60,
 		};
-	// ,
-	// [timeslots]
-	// )
+
+		console.log(newSlot, yPos, timeClicked);
+
+		setTimeslots(ts => [...ts.filter(s => s.id !== newSlot.id), newSlot]);
+	};
 
 	useEffect(() => {
-		console.log({ availableHeight });
-	}, [availableHeight]);
-
-	useEffect(() => {
-		console.log(window);
-
 		window.addEventListener(
 			`timeslotDragged:${weekday}`,
 			handleSlotsChange
 		);
-
-		console.log(weekday, timeslots);
 
 		return () => {
 			window.removeEventListener(
@@ -145,7 +128,7 @@ export default function DayColumn({
 					<hr
 						key={nanoid()}
 						style={{
-							top: timeToYPos(H, availableHeight),
+							top: timeToYPos(H, COLUMN_HEIGHT),
 						}}
 					/>
 				))}
@@ -154,7 +137,6 @@ export default function DayColumn({
 					<TimeSlot
 						key={slot.id}
 						timeslot={slot}
-						availableHeight={availableHeight}
 						onDrag={onDrag}
 						onResizeTop={onResizeTop}
 						onResizeBottom={onResizeBottom}
