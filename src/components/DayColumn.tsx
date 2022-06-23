@@ -94,10 +94,10 @@ export default function DayColumn({
 			getElementRect(columnRef).top
 		);
 
-		if (newStart <= 0) return;
-		if (newStart >= 1440 - height) return;
-		if (newEnd <= height) return;
-		if (newEnd >= 1440) return;
+		if (newStart < 0) return;
+		if (newStart > 1440 - height) return;
+		if (newEnd < height) return;
+		if (newEnd > 1440) return;
 
 		const newSlot: ITimeslot = {
 			id,

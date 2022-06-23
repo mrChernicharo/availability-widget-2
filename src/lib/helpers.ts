@@ -132,11 +132,13 @@ export const createTimeslotDraggedEvent = (
 // *************************************************** //
 
 export function getHoursFromTime(time: number) {
-	return Math.floor(time / 60);
+	const res = Math.floor(time / 60);
+	return Number.isNaN(res) ? 0 : res;
 }
 
 export function getMinutesFromTime(time: number) {
-	return Math.floor(time % 60);
+	const res = Math.floor(time % 60);
+	return Number.isNaN(res) ? 0 : res;
 }
 
 export function formatTimeUnit(time: number) {
